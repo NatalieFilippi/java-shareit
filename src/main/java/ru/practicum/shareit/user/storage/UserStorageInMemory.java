@@ -2,17 +2,25 @@ package ru.practicum.shareit.user.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ReflectionUtils;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Slf4j
 @Repository
 public class UserStorageInMemory implements UserStorage {
+    private static final String INVALID_EMAIL = "Пользователь с указанным email уже существует.";
+    private static final String NO_EMAIL = "Не указан email пользователя.";
+    private static final String NO_NAME = "Не указано имя пользователя.";
     private long lastUsedId = 0;
     private final HashMap<Long, User> users = new HashMap<>();
 
@@ -32,21 +40,27 @@ public class UserStorageInMemory implements UserStorage {
 
     @Override
     public User create(User user) {
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        log.debug("Сохранён пользователь: {}", user.toString());
+        if (validateUser(user)) {
+            user.setId(getNextId());
+            users.put(user.getId(), user) ;
+            log.debug("Сохранён пользователь: {}", user.toString());
+        }
         return user;
     }
 
     @Override
-    public User put(User user) throws ObjectNotFoundException {
-        if (!users.containsKey(user.getId())) {
-            log.debug("Пользователь не найден: {}", user.getId());
-            throw new ObjectNotFoundException("Пользователь не найден.");
+    public User update(User user, Map<String,String> fields) throws ObjectNotFoundException {
+        User userCopy = new User(user);
+        fields.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(User.class, (String) key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, userCopy, value);
+        });
+        if (validateUser(userCopy)) {
+            users.put(user.getId(), userCopy) ;
+            log.debug("Обновлён пользователь: {}", userCopy.toString());
         }
-        users.put(user.getId(), user);
-        log.debug("Обновлён пользователь: {}", user.toString());
-        return user;
+        return userCopy;
     }
 
     @Override
@@ -62,5 +76,18 @@ public class UserStorageInMemory implements UserStorage {
 
     private long getNextId() {
         return ++lastUsedId;
+    }
+
+    private boolean validateUser(User user) {
+        List<User> users = findAll();
+        List<User> foundUser = users.stream()
+                .filter(u -> u.getEmail().equals(user.getEmail()))   //найденный элемент имеет такой же email
+                .filter(u -> u.getId() != user.getId())         //найденный элемент не текущий
+                .collect(Collectors.toList());
+        if (foundUser == null || foundUser.isEmpty()) {
+            return true;
+        }
+        log.debug("Ошибка при попытке добавления пользователя: " + INVALID_EMAIL);
+        throw new ConflictException(INVALID_EMAIL);
     }
 }
