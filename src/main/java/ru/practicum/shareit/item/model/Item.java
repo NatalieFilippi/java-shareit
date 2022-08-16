@@ -21,9 +21,9 @@ public class Item {
     private boolean isAvailable;  //статус о том, доступна или нет вещь для аренды;
     private long owner;         //владелец вещи;
     private ItemRequest request;//если вещь была создана по запросу другого пользователя,
-                                //то в этом поле будет храниться ссылка на соответствующий запрос
+    //то в этом поле будет храниться ссылка на соответствующий запрос
 
-    public Item (Item item) {
+    public Item(Item item) {
         this.id = item.getId();
         this.name = item.getName();
         this.description = item.getDescription();

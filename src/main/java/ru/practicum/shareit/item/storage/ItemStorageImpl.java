@@ -70,7 +70,7 @@ public class ItemStorageImpl implements ItemStorage {
     public List<ItemDto> search(String text) {
         List<Item> item = items.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
         List<ItemDto> foundItem = item.stream()
-                .filter(i ->i.isAvailable())
+                .filter(i -> i.isAvailable())
                 .filter(i -> (i.getDescription().toLowerCase().contains(text) || i.getName().toLowerCase().contains(text)))
                 .map(i -> ItemMapper.toItemDto(i))
                 .collect(Collectors.toList());
