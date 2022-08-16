@@ -18,7 +18,7 @@ public class User {
     @Email(message = "Не валидный email пользователя!")
     private String email;
 
-    public User(User user) {
+    public User (User user) {
         this.id = user.id;
         this.name = user.name;
         this.email = user.email;
