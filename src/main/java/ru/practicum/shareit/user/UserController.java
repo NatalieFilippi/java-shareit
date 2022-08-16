@@ -2,9 +2,12 @@ package ru.practicum.shareit.user;
 
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * // TODO .
@@ -29,13 +32,14 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody User user)  {
+    public User create(@Valid @RequestBody User user)  {
         return userService.create(user);
     }
 
-    @PutMapping
-    public User put(@RequestBody User user) throws ObjectNotFoundException {
-        return userService.put(user);
+
+    @PatchMapping("/{id}")
+    public User update(@PathVariable("id") long id, @RequestBody Map<String,String> fields) throws ObjectNotFoundException {
+        return userService.update(id, fields);
     }
 
     @DeleteMapping("/{userId}")
