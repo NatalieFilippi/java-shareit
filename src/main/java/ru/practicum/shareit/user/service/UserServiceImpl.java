@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
@@ -20,23 +21,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<UserDto> findAll() {
         return userStorage.findAll();
     }
 
     @Override
-    public User findById(long id) throws ObjectNotFoundException {
+    public UserDto findById(long id) throws ObjectNotFoundException {
         return userStorage.findById(id);
     }
 
     @Override
-    public User create(User user) {
+    public UserDto create(User user) {
         return userStorage.create(user);
     }
 
     @Override
-    public User update(long id, Map<String, String> fields) throws ObjectNotFoundException {
-        User user = userStorage.findById(id);
+    public UserDto update(long id, Map<String, String> fields) throws ObjectNotFoundException {
+        UserDto user = userStorage.findById(id);
         if (user == null) {
             log.debug("Пользователь не найден: {}", user.getId());
             throw new ObjectNotFoundException("Пользователь не найден.");

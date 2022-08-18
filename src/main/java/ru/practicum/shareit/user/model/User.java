@@ -9,8 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
 public class User {
     private long id;
     private String name;

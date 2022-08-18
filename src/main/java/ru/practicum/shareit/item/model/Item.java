@@ -20,7 +20,7 @@ public class Item {
     @JsonProperty("available")
     private boolean isAvailable;  //статус о том, доступна или нет вещь для аренды;
     private long owner;         //владелец вещи;
-    private ItemRequest request;//если вещь была создана по запросу другого пользователя,
+    private long request;//если вещь была создана по запросу другого пользователя,
     //то в этом поле будет храниться ссылка на соответствующий запрос
 
     public Item(Item item) {

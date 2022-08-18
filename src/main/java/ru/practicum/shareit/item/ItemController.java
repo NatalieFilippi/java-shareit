@@ -20,7 +20,6 @@ import java.util.Map;
 public class ItemController {
 
     private final ItemService itemService;
-    private final ObjectMapper mapper;
 
 
     @PostMapping

@@ -33,14 +33,16 @@ public class ItemStorageImpl implements ItemStorage {
 
     @Override
     public ItemDto findById(long itemId) {
-        List<Item> item = items.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-        Item foundItem = item.stream().filter(i -> i.getId() == itemId).findFirst().orElseGet(() -> null);
-        return ItemMapper.toItemDto(foundItem);
+        Item item = items.values().stream()
+                .flatMap(Collection::stream)
+                .filter(i -> i.getId() == itemId)
+                .findFirst().orElseGet(() -> null);
+
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
     public ItemDto update(Item item, Map<String, String> fields) {
-        Item itemCopy = new Item(item);
         fields.remove("id");
         fields.forEach((key, value) -> {
             if (key.equals("available")) {
@@ -49,16 +51,16 @@ public class ItemStorageImpl implements ItemStorage {
             Field field = ReflectionUtils.findField(Item.class, (String) key);
             field.setAccessible(true);
             if (field.getType() == boolean.class) {
-                ReflectionUtils.setField(field, itemCopy, Boolean.parseBoolean(value));
+                ReflectionUtils.setField(field, item, Boolean.parseBoolean(value));
             } else {
-                ReflectionUtils.setField(field, itemCopy, value);
+                ReflectionUtils.setField(field, item, value);
             }
         });
 
         items.get(item.getOwner()).remove(ItemMapper.toItem(findById(item.getId())));
-        items.get(item.getOwner()).add(itemCopy);
-        log.debug("Обновлена вещь: {}", itemCopy.toString());
-        return ItemMapper.toItemDto(itemCopy);
+        items.get(item.getOwner()).add(item);
+        log.debug("Обновлена вещь: {}", item.toString());
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
@@ -68,13 +70,14 @@ public class ItemStorageImpl implements ItemStorage {
 
     @Override
     public List<ItemDto> search(String text) {
-        List<Item> item = items.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-        List<ItemDto> foundItem = item.stream()
-                .filter(i -> i.isAvailable())
+        List<ItemDto> foundItems = items.values().stream()
+                .flatMap(Collection::stream)
+                .filter(Item::isAvailable)
                 .filter(i -> (i.getDescription().toLowerCase().contains(text) || i.getName().toLowerCase().contains(text)))
                 .map(i -> ItemMapper.toItemDto(i))
                 .collect(Collectors.toList());
-        return foundItem;
+
+        return foundItems;
     }
 
     private long getNextId() {
