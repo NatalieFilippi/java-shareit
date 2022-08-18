@@ -9,7 +9,7 @@ public interface ItemService {
 
     ItemDto create(long userId, ItemDto item);
 
-    ItemDto update(long userId, long itemId, Map<String, String> fields);
+    ItemDto update(long userId, long itemId, ItemDto itemDto);
 
     ItemDto findById(long itemId);
 

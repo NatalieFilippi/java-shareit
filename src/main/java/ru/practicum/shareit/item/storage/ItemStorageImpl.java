@@ -42,20 +42,16 @@ public class ItemStorageImpl implements ItemStorage {
     }
 
     @Override
-    public ItemDto update(Item item, Map<String, String> fields) {
-        fields.remove("id");
-        fields.forEach((key, value) -> {
-            if (key.equals("available")) {
-                key = "isAvailable";
-            }
-            Field field = ReflectionUtils.findField(Item.class, (String) key);
-            field.setAccessible(true);
-            if (field.getType() == boolean.class) {
-                ReflectionUtils.setField(field, item, Boolean.parseBoolean(value));
-            } else {
-                ReflectionUtils.setField(field, item, value);
-            }
-        });
+    public ItemDto update(Item item, ItemDto itemDto) {
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
+        }
+        if (itemDto.getAvailable() != null) {
+            item.setAvailable(itemDto.getAvailable());
+        }
 
         items.get(item.getOwner()).remove(ItemMapper.toItem(findById(item.getId())));
         items.get(item.getOwner()).add(item);

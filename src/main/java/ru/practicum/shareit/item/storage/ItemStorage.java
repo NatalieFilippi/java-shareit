@@ -11,7 +11,7 @@ public interface ItemStorage {
 
     ItemDto findById(long itemId);
 
-    ItemDto update(Item item, Map<String, String> fields);
+    ItemDto update(Item item, ItemDto itemDto);
 
     List<ItemDto> findAllById(long userId);
 

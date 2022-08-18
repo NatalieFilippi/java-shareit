@@ -34,14 +34,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto update(long userId, long itemId, Map<String, String> fields) {
+    public ItemDto update(long userId, long itemId, ItemDto itemDto) {
         if (validateOwner(userId)) {
             Item item = ItemMapper.toItem(itemStorage.findById(itemId));
             if (item.getOwner() != userId) {
                 log.debug("Редактирование доступно только для владельца: {}", itemId);
                 throw new ObjectNotFoundException("Редактирование доступно только для владельца.");
             }
-            return itemStorage.update(item, fields);
+            return itemStorage.update(item, itemDto);
         }
         return null;
     }
@@ -62,7 +62,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> search(String text) {
         return text.isBlank() ? Collections.emptyList() : itemStorage.search(text.toLowerCase());
-
     }
 
     private boolean validateOwner(long userId) {
