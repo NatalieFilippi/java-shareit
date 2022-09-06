@@ -33,14 +33,14 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody User user)  {
+    public UserDto create(@Valid @RequestBody UserDto user)  {
         return userService.create(user);
     }
 
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable("id") long id, @RequestBody Map<String,String> fields) throws ObjectNotFoundException {
-        return userService.update(id, fields);
+    public UserDto update(@PathVariable("id") long id, @RequestBody UserDto user) throws ObjectNotFoundException {
+        return userService.update(id, user);
     }
 
     @DeleteMapping("/{userId}")
