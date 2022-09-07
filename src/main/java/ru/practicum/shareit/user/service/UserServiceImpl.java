@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
-    private final static String NOT_FOUND = "Не найден пользователь ";
+    private static final String NOT_FOUND = "Не найден пользователь ";
 
     public UserServiceImpl(UserStorage userStorage) {
         this.userStorage = userStorage;

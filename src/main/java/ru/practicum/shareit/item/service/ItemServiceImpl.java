@@ -35,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserStorage userStorage;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-    private final static String NOT_FOUND = "Не найден предмет ";
+    private static final String NOT_FOUND = "Не найден предмет ";
 
     @Override
     public ItemDto create(long userId, ItemDto itemDto) {

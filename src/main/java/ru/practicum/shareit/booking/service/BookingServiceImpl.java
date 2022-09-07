@@ -27,7 +27,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemStorage itemStorage;
     private final UserService userService;
-    private final static String NOT_FOUND = "Бронирование не найдено: ";
+    private static final String NOT_FOUND = "Бронирование не найдено: ";
 
     public BookingServiceImpl(BookingRepository bookingRepository, ItemStorage itemStorage, UserService userService) {
         this.bookingRepository = bookingRepository;

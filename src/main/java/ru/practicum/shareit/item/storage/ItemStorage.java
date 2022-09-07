@@ -12,6 +12,7 @@ public interface ItemStorage extends JpaRepository<Item, Long> {
             " or upper(i.description) like upper(concat('%', ?1, '%')))" +
             " and i.isAvailable=TRUE")
     List<Item> search(String text);
+
     List<Item> findAllByOwnerOrderById(Long userId);
 
 }
