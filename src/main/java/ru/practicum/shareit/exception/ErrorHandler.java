@@ -13,7 +13,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidation(final ValidationException  e) {
+    public ErrorResponse handleValidation(final ValidationException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 
@@ -22,6 +22,7 @@ public class ErrorHandler {
     public ErrorResponse handleNotFound(final ObjectNotFoundException e) {
         return new ErrorResponse("error", e.getMessage());
     }
+
     @ExceptionHandler(ConversionFailedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleConversionFailedException(final ConversionFailedException e) {
@@ -30,7 +31,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleValidation(final ConflictException  e) {
+    public ErrorResponse handleValidation(final ConflictException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 

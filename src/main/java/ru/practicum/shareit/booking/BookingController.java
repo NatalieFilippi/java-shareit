@@ -9,9 +9,6 @@ import ru.practicum.shareit.exception.ObjectNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * // TODO .
- */
 @RestController
 @RequestMapping(path = "/bookings")
 public class BookingController {
@@ -24,7 +21,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDto create(@RequestHeader("X-Sharer-User-Id") long userId,
-                            @Valid @RequestBody BookingDto bookingDto)  {
+                             @Valid @RequestBody BookingDto bookingDto) {
         return bookingService.create(userId, bookingDto);
     }
 

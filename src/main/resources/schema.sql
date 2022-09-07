@@ -35,5 +35,6 @@ CREATE TABLE IF NOT EXISTS comments (
                                         id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                         text VARCHAR,
                                         item_id BIGINT REFERENCES items(id),
-                                        author_id BIGINT REFERENCES users(id)
+                                        author_id BIGINT REFERENCES users(id),
+                                        created TIMESTAMP WITHOUT TIME ZONE
 );
