@@ -125,32 +125,26 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDtoWithBookerAndItem> findAllByOwner(long userId, BookingState state) {
         User user = getUser(userId);               //проверка на существование пользователя
-        List<Item> items = itemStorage.findAllByOwnerOrderById(userId).stream().collect(Collectors.toList());
-        if (items.isEmpty()) {
-            return Collections.emptyList();
-        }
-        Set<Long> itemsId = items.stream().map(i -> i.getId()).collect(Collectors.toSet());
-
         List<Booking> bookings = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findAllByItem_IdInOrderByStartDesc(itemsId);
+                bookings = bookingRepository.findAllByItem_IdInOrderByStartDescCustom(userId);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllByItem_IdInAndEndBeforeOrderByStartDesc(itemsId, now);
+                bookings = bookingRepository.findAllByItem_IdInAndEndBeforeOrderByStartDesc(userId, now);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByItem_IdInAndStartAfterOrderByStartDesc(itemsId, now);
+                bookings = bookingRepository.findAllByItem_IdInAndStartAfterOrderByStartDesc(userId, now);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllByItem_IdInAndStartBeforeAndEndAfterOrderByStartDesc(itemsId, now, now);
+                bookings = bookingRepository.findAllByItem_IdInAndStartBeforeAndEndAfterOrderByStartDesc(userId, now, now);
                 break;
             case WAITING:
-                bookings = bookingRepository.findAllByItem_IdInAndStatusOrderByStartDesc(itemsId, BookingStatus.WAITING);
+                bookings = bookingRepository.findAllByItem_IdInAndStatusOrderByStartDesc(userId, BookingStatus.WAITING.toString());
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByItem_IdInAndStatusOrderByStartDesc(itemsId, BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllByItem_IdInAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED.toString());
         }
         if (bookings.isEmpty()) {
             return Collections.emptyList();

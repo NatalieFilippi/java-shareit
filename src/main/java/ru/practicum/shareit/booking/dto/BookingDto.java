@@ -9,9 +9,6 @@ import ru.practicum.shareit.booking.BookingStatus;
 import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
 
-/**
- * // TODO .
- */
 @Data
 @Builder
 @AllArgsConstructor

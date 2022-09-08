@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.CommentMapper;
@@ -73,34 +71,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto findById(long userId, long itemId) {
-        ItemDto itemDto = ItemMapper.toItemDto(itemStorage.findById(itemId).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND + itemId)));
-        List<Comment> comments = commentRepository.findAllByItem_Id(itemId);
-        if (comments.isEmpty()) {
-            itemDto.setComments(Collections.emptyList());
-        } else {
-            itemDto.setComments(comments.stream().map(CommentMapper::toCommentDtoResponse).collect(Collectors.toList()));
-        }
-        addBookings(userId, itemDto);
-        return itemDto;
-    }
-
-    private ItemDto addBookings(long userId, ItemDto itemDto) {
-        if (userId == itemDto.getOwner()) {
-            List<BookingForItemDto> bookings = getBooking(itemDto.getId());
-            if (bookings.size() > 1) {
-                itemDto.setLastBooking(bookings.get(0));
-            }
-            if (bookings.size() >= 2) {
-                itemDto.setNextBooking(bookings.get(1));
-            }
-        }
-        return itemDto;
+        return itemStorage.getByIdForResponse(userId, itemId);
     }
 
     @Override
     public List<ItemDto> findAllById(long userId) {
         if (validateOwner(userId)) {
-            return itemStorage.findAllByOwnerOrderById(userId).stream().map(ItemMapper::toItemDto).map(i -> this.addBookings(userId, i)).collect(Collectors.toList());
+            return itemStorage.findIdByOwner(userId).stream().map(id -> itemStorage.getByIdForResponse(userId, id)).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
@@ -114,8 +91,8 @@ public class ItemServiceImpl implements ItemService {
     public CommentDtoResponse addComment(long userId, long itemId, CommentDto commentDto) {
         Item item = itemStorage.findById(itemId).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND + itemId));
         if (validateOwner(userId)) {
-            List<Booking> booking = bookingRepository.findAllByBooker_IdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
-            if (booking == null || booking.stream().filter(b -> b.getItem().getId() == itemId).findFirst().orElse(null) == null) {
+            List<Booking> booking = bookingRepository.findAllByBooker_IdAndItem_IdAndEndBeforeOrderByStartDesc(userId, itemId, LocalDateTime.now());
+            if (booking == null || booking.size() == 0) {
                 log.debug("Пользователь не бронировал вещь: {}", itemId);
                 throw new ValidationException("Пользователь не бронировал вещь.");
             }
@@ -140,10 +117,6 @@ public class ItemServiceImpl implements ItemService {
             throw new ObjectNotFoundException("Не найден владелец.");
         }
         return true;
-    }
-
-    private List<BookingForItemDto> getBooking(long itemId) {
-        return bookingRepository.findAllByItem_IdAndStatusOrderByStartAsc(itemId, BookingStatus.APPROVED);
     }
 
 }
