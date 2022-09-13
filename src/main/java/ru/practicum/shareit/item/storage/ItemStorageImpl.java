@@ -1,81 +1,58 @@
 package ru.practicum.shareit.item.storage;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
+import org.springframework.context.annotation.Lazy;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.dto.BookingForItemDto;
+import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.Comment;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
+public class ItemStorageImpl implements ItemStorageCustom {
 
-@Repository
-@Slf4j
-public class ItemStorageImpl implements ItemStorage {
-    private static HashMap<Long, List<Item>> items = new HashMap<>();
-    private long lastItemId = 0;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
+    private final ItemStorage itemStorage;
+
+    public ItemStorageImpl(@Lazy BookingRepository bookingRepository, @Lazy CommentRepository commentRepository, @Lazy ItemStorage itemStorage) {
+        this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
+        this.itemStorage = itemStorage;
+    }
 
     @Override
-    public ItemDto create(Item item) {
-        item.setId(getNextId());
-        items.compute(item.getOwner(), (userId, userItems) -> {
-            if (userItems == null) {
-                userItems = new ArrayList<>();
+    public ItemDto getByIdForResponse(long userId, long id) {
+        ItemDto itemDto = ItemMapper.toItemDto(itemStorage.findById(id).orElseThrow(() -> new ObjectNotFoundException("Не найден предмет " + id)));
+        List<Comment> comments = commentRepository.findAllByItem_Id(id);
+        if (comments.isEmpty()) {
+            itemDto.setComments(Collections.emptyList());
+        } else {
+            itemDto.setComments(comments.stream().map(CommentMapper::toCommentDtoResponse).collect(Collectors.toList()));
+        }
+        addBookings(userId, itemDto);
+        return itemDto;
+    }
+
+    private ItemDto addBookings(long userId, ItemDto itemDto) {
+        if (userId == itemDto.getOwner()) {
+            List<BookingForItemDto> bookings = getBooking(itemDto.getId());
+            if (bookings.size() > 1) {
+                itemDto.setLastBooking(bookings.get(0));
             }
-            userItems.add(item);
-            return userItems;
-        });
-        return ItemMapper.toItemDto(item);
-    }
-
-    @Override
-    public ItemDto findById(long itemId) {
-        Item item = items.values().stream()
-                .flatMap(Collection::stream)
-                .filter(i -> i.getId() == itemId)
-                .findFirst().orElseGet(() -> null);
-
-        return ItemMapper.toItemDto(item);
-    }
-
-    @Override
-    public ItemDto update(Item item, ItemDto itemDto) {
-        if (itemDto.getName() != null) {
-            item.setName(itemDto.getName());
+            if (bookings.size() >= 2) {
+                itemDto.setNextBooking(bookings.get(1));
+            }
         }
-        if (itemDto.getDescription() != null) {
-            item.setDescription(itemDto.getDescription());
-        }
-        if (itemDto.getAvailable() != null) {
-            item.setAvailable(itemDto.getAvailable());
-        }
-
-        items.get(item.getOwner()).remove(ItemMapper.toItem(findById(item.getId())));
-        items.get(item.getOwner()).add(item);
-        log.debug("Обновлена вещь: {}", item.toString());
-        return ItemMapper.toItemDto(item);
+        return itemDto;
     }
 
-    @Override
-    public List<ItemDto> findAllById(long userId) {
-        return new ArrayList<>(items.get(userId).stream().map(i -> ItemMapper.toItemDto(i)).collect(Collectors.toList()));
+    private List<BookingForItemDto> getBooking(long itemId) {
+        return bookingRepository.findAllByItem_IdAndStatusOrderByStartAsc(itemId, BookingStatus.APPROVED);
     }
-
-    @Override
-    public List<ItemDto> search(String text) {
-        List<ItemDto> foundItems = items.values().stream()
-                .flatMap(Collection::stream)
-                .filter(Item::isAvailable)
-                .filter(i -> (i.getDescription().toLowerCase().contains(text) || i.getName().toLowerCase().contains(text)))
-                .map(i -> ItemMapper.toItemDto(i))
-                .collect(Collectors.toList());
-
-        return foundItems;
-    }
-
-    private long getNextId() {
-        return ++lastItemId;
-    }
-
 }

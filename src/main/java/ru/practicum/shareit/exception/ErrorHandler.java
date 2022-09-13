@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exception;
 
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,7 +13,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidation(final ValidationException  e) {
+    public ErrorResponse handleValidation(final ValidationException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 
@@ -22,9 +23,15 @@ public class ErrorHandler {
         return new ErrorResponse("error", e.getMessage());
     }
 
+    @ExceptionHandler(ConversionFailedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleConversionFailedException(final ConversionFailedException e) {
+        return new ErrorResponse("Unknown state: UNSUPPORTED_STATUS", "Unknown state: UNSUPPORTED_STATUS");
+    }
+
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleValidation(final ConflictException  e) {
+    public ErrorResponse handleValidation(final ConflictException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 
