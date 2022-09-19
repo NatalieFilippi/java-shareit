@@ -17,6 +17,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dao.CommentRepository;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -279,6 +280,24 @@ public class ItemTest {
                 ValidationException.class,
                 () -> itemService.addComment(1, 1, new CommentDto("комментарий")));
         Assertions.assertEquals(exception.getMessage(), "Пользователь не бронировал вещь.");
+    }
+
+    @Test
+    void mapperToItem() {
+        Item getItem = ItemMapper.toItem(itemDto);
+        Assertions.assertEquals(getItem.getName(), itemDto.getName());
+
+        getItem = ItemMapper.toItem(null);
+        Assertions.assertNull(getItem);
+    }
+
+    @Test
+    void mapperToItemDto() {
+        ItemDto getItemDto = ItemMapper.toItemDto(item);
+        Assertions.assertEquals(getItemDto.getName(), item.getName());
+
+        getItemDto = ItemMapper.toItemDto(null);
+        Assertions.assertNull(getItemDto);
     }
 
 }

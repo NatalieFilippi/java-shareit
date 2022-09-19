@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -102,6 +103,25 @@ public class UserTests {
                 ObjectNotFoundException.class,
                 () -> userService.update(0, new UserDto()));
         Assertions.assertEquals(exception.getMessage(), "Пользователь не найден");
+    }
+
+    @Test
+    void mapperToUser() {
+        User getUser = UserMapper.toUser(userDto);
+        Assertions.assertEquals(getUser.getName(), userDto.getName());
+        Assertions.assertEquals(getUser.getEmail(), userDto.getEmail());
+        Assertions.assertEquals(getUser.getId(), userDto.getId());
+        getUser = UserMapper.toUser(null);
+        Assertions.assertNull(getUser);
+    }
+    @Test
+    void mapperToUserDto() {
+        UserDto getUserDto = UserMapper.toUserDto(user);
+        Assertions.assertEquals(getUserDto.getName(), user.getName());
+        Assertions.assertEquals(getUserDto.getEmail(), user.getEmail());
+        Assertions.assertEquals(getUserDto.getId(), user.getId());
+        getUserDto = UserMapper.toUserDto(null);
+        Assertions.assertNull(getUserDto);
     }
 
 }

@@ -12,11 +12,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.TestPropertySource;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.BookingState;
-import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
@@ -332,6 +330,42 @@ public class BookingTests {
                 .thenReturn(new PageImpl<>(List.of(booking)));
         List<BookingRequestDto> dtos = bookingService.findAllByOwner(1L, BookingState.CURRENT, 1, 10);
         Assertions.assertEquals(dtos.size(), 1);
+    }
+
+    @Test
+    void mapperToBooking() {
+        Booking getBooking = BookingMapper.toBooking(bookingDto);
+        Assertions.assertEquals(getBooking.getId(), bookingDto.getId());
+
+        getBooking = BookingMapper.toBooking(null);
+        Assertions.assertNull(getBooking);
+    }
+
+    @Test
+    void mapperToBookingDto() {
+        BookingDto getBookingDto = BookingMapper.toBookingDto(booking);
+        Assertions.assertEquals(getBookingDto.getId(), booking.getId());
+
+        getBookingDto = BookingMapper.toBookingDto(null);
+        Assertions.assertNull(getBookingDto);
+    }
+
+    @Test
+    void mapperToBookingDtoWithBookerAndItem() {
+        BookingRequestDto getBooking = BookingMapper.toBookingDtoWithBookerAndItem(booking);
+        Assertions.assertEquals(getBooking.getId(), booking.getId());
+
+        getBooking = BookingMapper.toBookingDtoWithBookerAndItem(null);
+        Assertions.assertNull(getBooking);
+    }
+
+    @Test
+    void mapperToBookingForItemDto() {
+        BookingForItemDto getBooking = BookingMapper.toBookingForItemDto(booking);
+        Assertions.assertEquals(getBooking.getId(), booking.getId());
+
+        getBooking = BookingMapper.toBookingForItemDto(null);
+        Assertions.assertNull(getBooking);
     }
 
 }

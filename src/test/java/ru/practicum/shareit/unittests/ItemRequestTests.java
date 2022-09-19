@@ -17,6 +17,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.requests.ItemRequest;
+import ru.practicum.shareit.requests.RequestMapper;
 import ru.practicum.shareit.requests.dao.ItemRequestRepository;
 import ru.practicum.shareit.requests.dto.ItemRequestDto;
 import ru.practicum.shareit.requests.service.ItemRequestService;
@@ -159,5 +160,14 @@ public class ItemRequestTests {
                 () -> itemRequestService.getAll(1L, 1, 0)
         );
         Assertions.assertEquals(exception2.getMessage(), "Количество вещей на странице должно быть больше 0.");
+    }
+
+    @Test
+    void mapperToRequestDto() {
+        ItemRequestDto getRequestDto = RequestMapper.toRequestDto(itemRequest);
+        Assertions.assertEquals(getRequestDto.getId(), itemRequest.getId());
+
+        getRequestDto = RequestMapper.toRequestDto(null);
+        Assertions.assertNull(getRequestDto);
     }
 }
