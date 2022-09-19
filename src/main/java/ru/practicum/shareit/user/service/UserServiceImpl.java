@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.user.UserMapper;
@@ -18,6 +19,7 @@ public class UserServiceImpl implements UserService {
     private static UserRepository userRepository;
     private static final String NOT_FOUND = "Не найден пользователь ";
 
+    @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
