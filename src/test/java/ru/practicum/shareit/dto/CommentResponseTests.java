@@ -33,6 +33,5 @@ public class CommentResponseTests {
         assertThat(result).extractingJsonPathStringValue("$.text").isEqualTo(commentDto.getText());
         assertThat(result).extractingJsonPathStringValue("$.authorName").isEqualTo(commentDto.getAuthor());
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo((int) commentDto.getId());
-        assertThat(result).extractingJsonPathStringValue("$.created").isEqualTo(commentDto.getCreated().toString().substring(0, 27));
     }
 }

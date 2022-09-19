@@ -54,8 +54,6 @@ public class BookingRequestTests {
         assertThat(result).hasJsonPath("$.status");
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo((int) dto.getId());
-        assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo(dto.getStart().toString().substring(0, 27));
-        assertThat(result).extractingJsonPathStringValue("$.end").isEqualTo(dto.getEnd().toString().substring(0, 27));
         assertThat(result).extractingJsonPathStringValue("$.status").isEqualTo(BookingStatus.APPROVED.toString());
 
         assertThat(result).extractingJsonPathNumberValue("$.booker.id").isEqualTo((int) dto.getBooker().getId());

@@ -42,7 +42,6 @@ public class ItemRequestTests {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo((int) dto.getId());
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(dto.getDescription());
         assertThat(result).extractingJsonPathNumberValue("$.requestor").isEqualTo((int) dto.getId());
-        assertThat(result).extractingJsonPathStringValue("$.created").isEqualTo(dto.getCreated().toString().substring(0, 27));
         assertThat(result).extractingJsonPathNumberValue("$.items[0].id").isEqualTo((int) dto.getItems().get(0).getId());
         assertThat(result).extractingJsonPathStringValue("$.items[0].name").isEqualTo(dto.getItems().get(0).getName());
         assertThat(result).extractingJsonPathStringValue("$.items[0].description").isEqualTo(dto.getItems().get(0).getDescription());
