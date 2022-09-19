@@ -23,9 +23,4 @@ public class User {
     @Column
     private String email;
 
-    public User(User user) {
-        this.id = user.id;
-        this.name = user.name;
-        this.email = user.email;
-    }
 }
