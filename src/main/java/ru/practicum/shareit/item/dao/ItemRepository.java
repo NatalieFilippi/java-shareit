@@ -16,6 +16,7 @@ public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositor
     Page<Item> search(String text, Pageable pageable);
 
     List<Item> findAllByOwnerOrderById(Long userId);
+
     @Query("select distinct i.id from Item i left join Booking b on i.id = b.item.id where i.owner = ?1 order by i.id")
     Page<Long> findIdByOwner(long id, Pageable pageable);
 

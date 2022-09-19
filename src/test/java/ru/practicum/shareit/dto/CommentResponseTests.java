@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CommentResponseTests {
     @Autowired
     private JacksonTester<CommentDtoResponse> json;
-    private final static LocalDateTime now = LocalDateTime.now();
+    private static final LocalDateTime now = LocalDateTime.now();
     private static CommentDtoResponse commentDto = CommentDtoResponse.builder()
             .id(1)
             .text("Комментарий")

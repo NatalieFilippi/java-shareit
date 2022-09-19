@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ItemRequestTests {
     @Autowired
     private JacksonTester<ItemRequestDto> json;
-    private final static LocalDateTime now = LocalDateTime.now();
+    private static final LocalDateTime now = LocalDateTime.now();
     private static ItemRequestDto dto = new ItemRequestDto(1L,
             "Запрос",
             1L,
