@@ -36,7 +36,7 @@ public class UserTests {
     private UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
 
     @BeforeEach
-    private void beforeEach() {
+    public void beforeEach() {
         userService = new UserServiceImpl(mockUserRepository);
     }
 
@@ -114,6 +114,7 @@ public class UserTests {
         getUser = UserMapper.toUser(null);
         Assertions.assertNull(getUser);
     }
+
     @Test
     void mapperToUserDto() {
         UserDto getUserDto = UserMapper.toUserDto(user);

@@ -85,7 +85,7 @@ public class ItemTest {
     private CommentRepository mockCommentRepository;
 
     @BeforeEach
-    private void beforeEach() {
+    public void beforeEach() {
         itemService = new ItemServiceImpl(mockItemRepository,
                 mockUserRepository,
                 mockBookingRepository,

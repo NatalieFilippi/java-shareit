@@ -55,7 +55,7 @@ public class BookingTests {
     private BookingRepository mockBookingRepository;
 
     @BeforeEach
-    private void beforeEach() {
+    public void beforeEach() {
         userDto = UserDto.builder()
                 .id(1)
                 .name("Peter")
@@ -259,7 +259,6 @@ public class BookingTests {
         Mockito
                 .when(mockUserService.findById(Mockito.anyLong()))
                 .thenReturn(userBooker);
-        Pageable pageable = PageRequest.of(0, 10);
         Mockito
                 .when(mockBookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfter(Mockito.anyLong(),
                         any(LocalDateTime.class),
@@ -301,7 +300,6 @@ public class BookingTests {
 
     @Test
     void findAllByOwnerPAST() {
-        Pageable pageable = PageRequest.of(0, 10);
         Mockito
                 .when(mockBookingRepository.findAllByItem_IdInAndEndBefore(Mockito.anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(booking)));
@@ -311,7 +309,6 @@ public class BookingTests {
 
     @Test
     void findAllByOwnerFUTURE() {
-        Pageable pageable = PageRequest.of(0, 10);
         Mockito
                 .when(mockBookingRepository.findAllByItem_IdInAndStartAfter(Mockito.anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(booking)));
@@ -321,7 +318,6 @@ public class BookingTests {
 
     @Test
     void findAllByOwnerCURRENT() {
-        Pageable pageable = PageRequest.of(0, 10);
         Mockito
                 .when(mockBookingRepository.findAllByItem_IdInAndStartBeforeAndEndAfter(Mockito.anyLong(),
                         any(LocalDateTime.class),

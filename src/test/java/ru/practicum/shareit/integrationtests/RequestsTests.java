@@ -43,7 +43,7 @@ public class RequestsTests {
 
     @BeforeEach
     @Sql({"/schema.sql"})
-    private void setUp() {
+    public void setUp() {
         itemDto = ItemDto.builder()
                 .name("вещь")
                 .description("Описание вещи")

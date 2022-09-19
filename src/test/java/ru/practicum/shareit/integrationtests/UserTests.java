@@ -35,7 +35,7 @@ public class UserTests {
 
     @BeforeEach
     @Sql({"/schema.sql"})
-    private void setUp() {
+    public void setUp() {
         userDto = UserDto.builder()
                 .name("Peter")
                 .email("peter@ya.ru")

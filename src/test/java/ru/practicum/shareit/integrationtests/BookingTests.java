@@ -48,7 +48,7 @@ public class BookingTests {
 
     @BeforeEach
     @Sql({"/schema.sql"})
-    private void setUp() {
+    public void setUp() {
         itemDto = ItemDto.builder()
                 .id(1)
                 .name("вещь")
