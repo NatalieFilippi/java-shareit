@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static UserRepository userRepository;
+    private final UserRepository userRepository;
     private static final String NOT_FOUND = "Не найден пользователь ";
 
     @Autowired
