@@ -104,9 +104,9 @@ public class BookingTests {
         UserDto userBookerDto = userService.create(userBooker);
         itemDto.setOwner(userOwnerDto.getId());
         ItemDto getItem = itemService.create(userOwnerDto.getId(), itemDto);
-        BookingDto getBooking = service.create(userBookerDto.getId(), bookingDto);
         bookingDto.setBooker(userBookerDto.getId());
         bookingDto.setItemId(getItem.getId());
+        BookingDto getBooking = service.create(userBookerDto.getId(), bookingDto);
         service.update(userOwnerDto.getId(), true, getBooking.getId());
 
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.booker.id = :id", Booking.class);
