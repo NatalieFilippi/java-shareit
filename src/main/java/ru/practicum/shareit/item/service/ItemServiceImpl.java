@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -14,9 +16,9 @@ import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.storage.CommentRepository;
-import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.item.dao.CommentRepository;
+import ru.practicum.shareit.item.dao.ItemRepository;
+import ru.practicum.shareit.user.dao.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -29,94 +31,102 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemStorage itemStorage;
-    private final UserStorage userStorage;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private static final String NOT_FOUND = "Не найден предмет ";
 
     @Override
     public ItemDto create(long userId, ItemDto itemDto) {
-        if (validateOwner(userId)) {
-            Item item = ItemMapper.toItem(itemDto);
-            item.setOwner(userId);
-            return ItemMapper.toItemDto(itemStorage.save(item));
-        }
-        return null;
+        validateOwner(userId);
+        Item item = ItemMapper.toItem(itemDto);
+        item.setOwner(userId);
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
     public ItemDto update(long userId, long itemId, ItemDto itemDto) {
-        if (validateOwner(userId)) {
-            Item item = itemStorage.findById(itemId).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND + itemId));
-            if (item.getOwner() != userId) {
-                log.debug("Редактирование доступно только для владельца: {}", itemId);
-                throw new ObjectNotFoundException("Редактирование доступно только для владельца.");
-            }
-
-            if (itemDto.getAvailable() != null) {
-                item.setAvailable(itemDto.getAvailable());
-            }
-            if (itemDto.getName() != null && !itemDto.getName().isBlank()) {
-                item.setName(itemDto.getName());
-            }
-            if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank()) {
-                item.setDescription(itemDto.getDescription());
-            }
-
-            return ItemMapper.toItemDto(itemStorage.save(item));
+        validateOwner(userId);
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND + itemId));
+        if (item.getOwner() != userId) {
+            log.debug("Редактирование доступно только для владельца: {}", itemId);
+            throw new ObjectNotFoundException("Редактирование доступно только для владельца.");
         }
-        return null;
+
+        if (itemDto.getAvailable() != null) {
+            item.setAvailable(itemDto.getAvailable());
+        }
+        if (itemDto.getName() != null && !itemDto.getName().isBlank()) {
+            item.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank()) {
+            item.setDescription(itemDto.getDescription());
+        }
+
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
     public ItemDto findById(long userId, long itemId) {
-        return itemStorage.getByIdForResponse(userId, itemId);
+        return itemRepository.getByIdForResponse(userId, itemId);
     }
 
     @Override
-    public List<ItemDto> findAllById(long userId) {
-        if (validateOwner(userId)) {
-            return itemStorage.findIdByOwner(userId).stream().map(id -> itemStorage.getByIdForResponse(userId, id)).collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+    public List<ItemDto> findAllById(long userId, int from, int size) {
+        validateOwner(userId);
+        checkingPageParameters(from, size);
+        Pageable pageable = PageRequest.of(from / size, size);
+        return itemRepository.findIdByOwner(userId, pageable).stream()
+                .map(id -> itemRepository.getByIdForResponse(userId, id))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<ItemDto> search(String text) {
-        return text.isBlank() ? Collections.emptyList() : itemStorage.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+    public List<ItemDto> search(String text, int from, int size) {
+        checkingPageParameters(from, size);
+        Pageable pageable = PageRequest.of(from / size, size);
+        return text.isBlank() ? Collections.emptyList() : itemRepository.search(text, pageable).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
     public CommentDtoResponse addComment(long userId, long itemId, CommentDto commentDto) {
-        Item item = itemStorage.findById(itemId).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND + itemId));
-        if (validateOwner(userId)) {
-            List<Booking> booking = bookingRepository.findAllByBooker_IdAndItem_IdAndEndBeforeOrderByStartDesc(userId, itemId, LocalDateTime.now());
-            if (booking == null || booking.size() == 0) {
-                log.debug("Пользователь не бронировал вещь: {}", itemId);
-                throw new ValidationException("Пользователь не бронировал вещь.");
-            }
-            Comment comment = Comment.builder()
-                    .author(userStorage.findById(userId).get())
-                    .text(commentDto.getText())
-                    .item(item)
-                    .created(LocalDateTime.now())
-                    .build();
-            return CommentMapper.toCommentDtoResponse(commentRepository.save(comment));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND + itemId));
+        validateOwner(userId);
+        List<Booking> booking = bookingRepository.findAllByBooker_IdAndItem_IdAndEndBeforeOrderByStartDesc(userId, itemId, LocalDateTime.now());
+        if (booking == null || booking.size() == 0) {
+            log.debug("Пользователь не бронировал вещь: {}", itemId);
+            throw new ValidationException("Пользователь не бронировал вещь.");
         }
-        return null;
+        Comment comment = Comment.builder()
+                .author(userRepository.findById(userId).get())
+                .text(commentDto.getText())
+                .item(item)
+                .created(LocalDateTime.now())
+                .build();
+        return CommentMapper.toCommentDtoResponse(commentRepository.save(comment));
     }
 
-    private boolean validateOwner(long userId) {
+    private void validateOwner(long userId) {
         if (userId == 0) {
             log.debug("Не задан владелец.");
             throw new ObjectNotFoundException("Не задан владелец.");
         }
-        if (userStorage.findById(userId).isEmpty()) {
+        if (userRepository.findById(userId).isEmpty()) {
             log.debug("Не найден владелец: {}", userId);
             throw new ObjectNotFoundException("Не найден владелец.");
         }
-        return true;
+    }
+
+    private void checkingPageParameters(int from, int size) {
+        if (size <= 0) {
+            log.debug("Количество вещей на странице должно быть больше 0.");
+            throw new ValidationException("Количество вещей на странице должно быть больше 0.");
+        }
+        if (from < 0) {
+            log.debug("Индекс первого элемента должен быть больше 0.");
+            throw new ValidationException("Индекс первого элемента должен быть больше 0.");
+        }
     }
 
 }
