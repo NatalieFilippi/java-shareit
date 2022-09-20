@@ -282,7 +282,7 @@ public class BookingTests {
     void findAllByOwnerWAITING() {
         Pageable pageable = PageRequest.of(0, 10);
         Mockito
-                .when(mockBookingRepository.findAllByItem_IdInAndStatus(1L, BookingStatus.WAITING.toString(), pageable))
+                .when(mockBookingRepository.findAllByItem_IdInAndStatus(1L, BookingStatus.WAITING, pageable))
                 .thenReturn(new PageImpl<>(List.of(booking)));
         List<BookingRequestDto> dtos = bookingService.findAllByOwner(1L, BookingState.WAITING, 1, 10);
         Assertions.assertEquals(dtos.size(), 1);
@@ -292,7 +292,7 @@ public class BookingTests {
     void findAllByOwnerREJECTED() {
         Pageable pageable = PageRequest.of(0, 10);
         Mockito
-                .when(mockBookingRepository.findAllByItem_IdInAndStatus(1L, BookingStatus.REJECTED.toString(), pageable))
+                .when(mockBookingRepository.findAllByItem_IdInAndStatus(1L, BookingStatus.REJECTED, pageable))
                 .thenReturn(new PageImpl<>(List.of(booking)));
         List<BookingRequestDto> dtos = bookingService.findAllByOwner(1L, BookingState.REJECTED, 1, 10);
         Assertions.assertEquals(dtos.size(), 1);

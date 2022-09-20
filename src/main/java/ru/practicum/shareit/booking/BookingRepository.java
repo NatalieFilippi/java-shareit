@@ -22,24 +22,24 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Page<Booking> findAllByBooker_IdAndStatus(Long id, BookingStatus status, Pageable pageable); //все бронирования в статусе ожидания подтверждения
 
 
-    @Query(value = "select * from bookings b join items i on b.item_id=i.id where owner_id = ?1 order by start_date desc", nativeQuery = true)
+    @Query("select b from Booking b join Item i on b.item.id = i.id where i.owner = ?1 order by b.start desc")
     Page<Booking> findAllByItem_IdIn(Long id, Pageable pageable);
 
-    @Query(value = "select * from bookings b join items i on b.item_id=i.id " +
-            "where owner_id = ?1 and end_date < ?2 order by start_date desc", nativeQuery = true)
+    @Query("select b from Booking b join Item i on b.item.id = i.id where i.owner = ?1 " +
+            "and b.end < ?2 order by b.start desc")
     Page<Booking> findAllByItem_IdInAndEndBefore(Long id, LocalDateTime end, Pageable pageable);
 
-    @Query(value = "select * from bookings b join items i on b.item_id=i.id " +
-            "where owner_id = ?1 and start_date > ?2 order by start_date desc", nativeQuery = true)
+    @Query("select b from Booking b join Item i on b.item.id = i.id where i.owner = ?1 " +
+            "and b.start > ?2 order by b.start desc")
     Page<Booking> findAllByItem_IdInAndStartAfter(Long id, LocalDateTime start, Pageable pageable); //все будущие бронирования
 
-    @Query(value = "select * from bookings b join items i on b.item_id=i.id " +
-            "where owner_id = ?1 and start_date < ?2 and end_date > ?3 order by start_date desc", nativeQuery = true)
+    @Query("select b from Booking b join Item i on b.item.id = i.id where i.owner = ?1 " +
+            "and b.start < ?2 and b.end > ?3 order by b.start desc")
     Page<Booking> findAllByItem_IdInAndStartBeforeAndEndAfter(Long id, LocalDateTime start, LocalDateTime end, Pageable pageable); //все текущие бронирования
 
-    @Query(value = "select * from bookings b join items i on b.item_id=i.id  " +
-            "where owner_id = ?1 and status like ?2 order by start_date desc", nativeQuery = true)
-    Page<Booking> findAllByItem_IdInAndStatus(Long id, String status, Pageable pageable); //все бронирования в статусе ожидания подтверждения
+    @Query("select b from Booking b join Item i on b.item.id = i.id where i.owner = ?1 " +
+            "and b.status = ?2 order by b.start desc")
+    Page<Booking> findAllByItem_IdInAndStatus(Long id, BookingStatus status, Pageable pageable); //все бронирования в статусе ожидания подтверждения
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingForItemDto(b.id, u.id) from Booking b" +
             " join b.booker u where b.item.id = ?1 and b.status = ?2 order by b.start asc")

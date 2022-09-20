@@ -147,10 +147,10 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByItem_IdInAndStartBeforeAndEndAfter(userId, now, now, pageable);
                 break;
             case WAITING:
-                bookings = bookingRepository.findAllByItem_IdInAndStatus(userId, BookingStatus.WAITING.toString(), pageable);
+                bookings = bookingRepository.findAllByItem_IdInAndStatus(userId, BookingStatus.WAITING, pageable);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByItem_IdInAndStatus(userId, BookingStatus.REJECTED.toString(), pageable);
+                bookings = bookingRepository.findAllByItem_IdInAndStatus(userId, BookingStatus.REJECTED, pageable);
         }
         if (bookings.isEmpty()) {
             return Collections.emptyList();

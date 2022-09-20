@@ -222,10 +222,10 @@ public class BookingTests {
         itemRepository.save(item);
         repository.save(booking);
 
-        Page<Booking> bookings = repository.findAllByItem_IdInAndStatus(userOwner.getId(), BookingStatus.REJECTED.toString(), Pageable.unpaged());
+        Page<Booking> bookings = repository.findAllByItem_IdInAndStatus(userOwner.getId(), BookingStatus.REJECTED, Pageable.unpaged());
         Assertions.assertEquals(bookings.getSize(), 0);
 
-        bookings = repository.findAllByItem_IdInAndStatus(userOwner.getId(), BookingStatus.WAITING.toString(), Pageable.unpaged());
+        bookings = repository.findAllByItem_IdInAndStatus(userOwner.getId(), BookingStatus.WAITING, Pageable.unpaged());
         Assertions.assertEquals(bookings.getSize(), 1);
     }
 
