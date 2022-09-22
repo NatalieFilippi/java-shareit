@@ -39,8 +39,8 @@ import static org.mockito.ArgumentMatchers.any;
 @SpringBootTest
 public class BookingTests {
 
-    private static LocalDateTime start = LocalDateTime.now();
-    private static LocalDateTime end = LocalDateTime.now().plusHours(2);
+    private static final LocalDateTime start = LocalDateTime.now();
+    private static final LocalDateTime end = LocalDateTime.now().plusHours(2);
     private static UserDto userDto;
     private static UserDto userBooker;
     private static Item item;
@@ -326,6 +326,21 @@ public class BookingTests {
                 .thenReturn(new PageImpl<>(List.of(booking)));
         List<BookingRequestDto> dtos = bookingService.findAllByOwner(1L, BookingState.CURRENT, 1, 10);
         Assertions.assertEquals(dtos.size(), 1);
+    }
+
+    @Test
+    void getAllFailParametersPage() {
+        final ValidationException exception = Assertions.assertThrows(
+                ValidationException.class,
+                () -> bookingService.findAllByOwner(1L, BookingState.ALL, -1, 10)
+        );
+        Assertions.assertEquals(exception.getMessage(), "Индекс первого элемента должен быть больше 0.");
+
+        final ValidationException exception2 = Assertions.assertThrows(
+                ValidationException.class,
+                () -> bookingService.findAllByOwner(1L, BookingState.ALL, 1, 0)
+        );
+        Assertions.assertEquals(exception2.getMessage(), "Количество вещей на странице должно быть больше 0.");
     }
 
     @Test

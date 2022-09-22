@@ -49,7 +49,7 @@ public class ItemRequestTests {
     private static Item item;
     private static ItemRequest itemRequest;
     private static ItemRequestDto itemRequestDto;
-    private static LocalDateTime created = LocalDateTime.now();
+    private static final LocalDateTime created = LocalDateTime.now();
 
     @BeforeEach
     private void beforeEach() {
@@ -109,6 +109,18 @@ public class ItemRequestTests {
                 () -> itemRequestService.create(0L, itemRequestDto)
         );
         Assertions.assertEquals(exception.getMessage(), "Не задан владелец.");
+    }
+
+    @Test
+    void createUserNotFound() {
+        Mockito
+                .when(mockUserRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.empty());
+        final ObjectNotFoundException exception = Assertions.assertThrows(
+                ObjectNotFoundException.class,
+                () -> itemRequestService.create(99L, itemRequestDto)
+        );
+        Assertions.assertEquals(exception.getMessage(), "Не найден владелец.");
     }
 
     @Test

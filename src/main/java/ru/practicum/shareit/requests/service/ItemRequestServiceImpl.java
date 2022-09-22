@@ -56,7 +56,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             return Collections.emptyList();
         }
         List<ItemRequestDto> requestDtos = requests.stream()
-                .map(r -> RequestMapper.toRequestDto(r))
+                .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
         addResponse(requestDtos);
         return requestDtos;
@@ -71,7 +71,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (pages.isEmpty()) {
             return Collections.emptyList();
         }
-        List<ItemRequestDto> itemRequestDtos = pages.map(i -> RequestMapper.toRequestDto(i)).toList();
+        List<ItemRequestDto> itemRequestDtos = pages.map(RequestMapper::toRequestDto).toList();
         addResponse(itemRequestDtos);
         return itemRequestDtos;
 
@@ -89,8 +89,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private List<ItemRequestDto> addResponse(List<ItemRequestDto> requestDtos) {
         for (ItemRequestDto requestDto : requestDtos) {
             List<Item> items = itemRepository.findByRequest_Id(requestDto.getId());
-            requestDto.setItems(items.stream().map(item ->
-                    ItemMapper.toItemDto(item)).collect(Collectors.toList()));
+            requestDto.setItems(items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList()));
         }
         return requestDtos;
     }

@@ -16,8 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookingTests {
     @Autowired
     private JacksonTester<BookingDto> json;
-    private static LocalDateTime now = LocalDateTime.now();
-    private static LocalDateTime later = LocalDateTime.now().plusHours(1);
+    private static final LocalDateTime now = LocalDateTime.now();
+    private static final LocalDateTime later = LocalDateTime.now().plusHours(1);
     private static BookingDto dto = BookingDto.builder()
             .id(1)
             .start(now)

@@ -13,7 +13,7 @@ import ru.practicum.shareit.user.model.User;
 public class UserTests {
 
     @Autowired
-    UserRepository repository;
+    private UserRepository repository;
     @Autowired
     private TestEntityManager em;
     private static User user;

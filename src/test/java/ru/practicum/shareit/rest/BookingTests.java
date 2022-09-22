@@ -46,10 +46,10 @@ public class BookingTests {
     private MockMvc mvc;
     private BookingDto bookingDto;
     private BookingRequestDto bookingRequestDto;
-    private static LocalDateTime start = LocalDateTime.now();
-    private static LocalDateTime end = LocalDateTime.now().plusHours(2);
-    private static String startStr = "2023-10-18T12:00:00";
-    private static String endStr = "2023-10-18T18:00:00";
+    private static final LocalDateTime start = LocalDateTime.now();
+    private static final LocalDateTime end = LocalDateTime.now().plusHours(2);
+    private static final String startStr = "2023-10-18T12:00:00";
+    private static final String endStr = "2023-10-18T18:00:00";
 
     @BeforeEach
     void setUp() {

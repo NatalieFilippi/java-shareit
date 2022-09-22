@@ -25,21 +25,21 @@ import java.time.LocalDateTime;
 public class BookingTests {
 
     @Autowired
-    BookingRepository repository;
+    private BookingRepository repository;
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Autowired
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private TestEntityManager em;
     private static Item item;
     private static User userOwner;
     private static User userBooker;
     private static Booking booking;
-    private static LocalDateTime start = LocalDateTime.now();
-    private static LocalDateTime end = LocalDateTime.now().plusHours(2);
+    private static final LocalDateTime start = LocalDateTime.now();
+    private static final LocalDateTime end = LocalDateTime.now().plusHours(2);
 
     @BeforeEach
     void beforeEach() {

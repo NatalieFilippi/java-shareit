@@ -43,8 +43,8 @@ public class BookingTests {
     private static UserDto userOwner;
     private static UserDto userBooker;
     private static BookingDto bookingDto;
-    private static LocalDateTime start = LocalDateTime.now();
-    private static LocalDateTime end = LocalDateTime.now().plusHours(2);
+    private static final LocalDateTime start = LocalDateTime.now();
+    private static final LocalDateTime end = LocalDateTime.now().plusHours(2);
 
     @BeforeEach
     @Sql({"/schema.sql"})

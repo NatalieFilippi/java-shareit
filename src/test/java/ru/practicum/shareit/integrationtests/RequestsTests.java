@@ -39,7 +39,7 @@ public class RequestsTests {
     private static ItemDto itemDto;
     private static UserDto userDto;
     private static ItemRequestDto requestDto;
-    private static LocalDateTime created = LocalDateTime.now();
+    private static final LocalDateTime created = LocalDateTime.now();
 
     @BeforeEach
     @Sql({"/schema.sql"})

@@ -14,14 +14,15 @@ import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 public class ItemTests {
 
     @Autowired
-    ItemRepository repository;
+    private ItemRepository repository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private TestEntityManager em;
     private static Item item;
@@ -97,6 +98,16 @@ public class ItemTests {
         List<Item> items = repository.findByRequest_Id(8);
         Assertions.assertNotNull(items);
         Assertions.assertEquals(items.size(), 1);
+    }
+
+    @Test
+    void findById() {
+        userRepository.save(user);
+        item.setOwner(user.getId());
+        item = repository.save(item);
+        Optional<Item> getItem = repository.findById(item.getId());
+        Assertions.assertNotNull(getItem);
+        Assertions.assertEquals(getItem.get().getDescription(), item.getDescription());
     }
 
 }

@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import ru.practicum.shareit.item.dao.CommentRepository;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.requests.ItemRequest;
@@ -23,20 +22,18 @@ import java.util.List;
 public class RequestTests {
 
     @Autowired
-    ItemRequestRepository repository;
+    private ItemRequestRepository repository;
     @Autowired
-    CommentRepository commentRepository;
+    private ItemRepository itemRepository;
     @Autowired
-    ItemRepository itemRepository;
-    @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private TestEntityManager em;
     private static Item item;
     private static User userOwner;
     private static User user;
     private static ItemRequest itemRequest;
-    private static LocalDateTime created = LocalDateTime.now();
+    private static final LocalDateTime created = LocalDateTime.now();
 
     @BeforeEach
     void beforeEach() {
