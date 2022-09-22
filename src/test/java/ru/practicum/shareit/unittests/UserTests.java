@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -103,6 +105,22 @@ public class UserTests {
                 ObjectNotFoundException.class,
                 () -> userService.update(0, new UserDto()));
         Assertions.assertEquals(exception.getMessage(), "Пользователь не найден");
+    }
+
+    @Test
+    void deleteOk() {
+        doNothing().when(mockUserRepository).deleteById(Mockito.anyLong());
+        userService.delete(1L);
+        Mockito.verify(mockUserRepository, Mockito.times(1))
+                .deleteById(Mockito.anyLong());
+    }
+
+    @Test
+    void deleteAll() {
+        doNothing().when(mockUserRepository).deleteAll();
+        userService.deleteAll();
+        Mockito.verify(mockUserRepository, Mockito.times(1))
+                .deleteAll();
     }
 
     @Test
