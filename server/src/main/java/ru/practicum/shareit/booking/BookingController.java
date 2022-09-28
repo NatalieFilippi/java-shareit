@@ -6,7 +6,6 @@ import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
