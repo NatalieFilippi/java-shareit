@@ -10,7 +10,6 @@ import ru.practicum.shareit.requests.dto.ItemRequestDto;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/requests")
