@@ -3,8 +3,6 @@ package ru.practicum.shareit.user.model;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
@@ -18,8 +16,6 @@ public class User {
     private long id;
     @Column
     private String name;
-    @NotBlank(message = "Не указан email пользователя!")
-    @Email(message = "Не валидный email пользователя!")
     @Column
     private String email;
 
